@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,11 +40,10 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
         ),
         backgroundColor: Colors.black,
-        body: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              TextField(
+        body: Column(children: <Widget>[
+          Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextField(
                 decoration: InputDecoration(
                     labelText: "Pesquise aqui...",
                     alignLabelWithHint: true,
@@ -51,9 +51,51 @@ class _HomePageState extends State<HomePage> {
                     border: OutlineInputBorder()),
                 style: TextStyle(color: Colors.white, fontSize: 18.0),
                 textAlign: TextAlign.center,
-              )
-            ],
-          ),
-        ));
+              )),
+          Expanded(
+              child: FutureBuilder<Map>(
+                  future: _getGifs(),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return Container(
+                          width: 200.0,
+                          height: 200.0,
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 5.0,
+                          ),
+                        );
+                      default:
+                        if (snapshot.hasError) {
+                          return buildResponseMessage(
+                              "Erro ao carregar os GIFS");
+                        }
+
+                        return _createGifTable(context, snapshot);
+                    }
+                  }))
+        ]));
   }
+
+  Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
+    return SingleChildScrollView(
+        child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[],
+            )));
+  }
+}
+
+Widget buildResponseMessage(String message) {
+  return Center(
+    child: Text(message,
+        style: TextStyle(color: Colors.white, fontSize: 25.0),
+        textAlign: TextAlign.center),
+  );
 }
