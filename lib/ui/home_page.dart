@@ -15,18 +15,9 @@ class _HomePageState extends State<HomePage> {
   Future<Map> _getGifs() async {
     http.Response response = await http.get(_search == null
         ? "https://api.giphy.com/v1/gifs/trending?api_key=TBBxN2L0xO3LUlDJ2jvz5ACOnyZVGcgL&limit=20&rating=G"
-        : "https://api.giphy.com/v1/gifs/search?api_key=TBBxN2L0xO3LUlDJ2jvz5ACOnyZVGcgL&q=$_search&limit=20&offset=$_offset&rating=G&lang=en");
+        : "https://api.giphy.com/v1/gifs/search?api_key=TBBxN2L0xO3LUlDJ2jvz5ACOnyZVGcgL&q=$_search&limit=19&offset=$_offset&rating=G&lang=en");
 
     return json.decode(response.body);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _getGifs().then((map) {
-      print(map);
-    });
   }
 
   @override
@@ -50,6 +41,11 @@ class _HomePageState extends State<HomePage> {
                     border: OutlineInputBorder()),
                 style: TextStyle(color: Colors.white, fontSize: 18.0),
                 textAlign: TextAlign.center,
+                onSubmitted: (String text) {
+                  setState(() {
+                    _search = text;
+                  });
+                },
               )),
           Expanded(
               child: FutureBuilder<Map>(
@@ -80,15 +76,40 @@ class _HomePageState extends State<HomePage> {
         ]));
   }
 
+  int _getCount(List data) {
+    return _search == null ? data.length : data.length + 1;
+  }
+
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
     return GridView.builder(
         padding: EdgeInsets.all(8.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 8.0, mainAxisSpacing: 8.0),
-        itemCount: snapshot.data["data"].length,
+        itemCount: _getCount(snapshot.data["data"]),
         itemBuilder: (context, index) {
-          return GestureDetector(
-            child: Image.network(snapshot.data["data"][index]["images"]["fixed_height"]["url"], height: 300.0, fit: BoxFit.cover,),
+          if (_search == null || index < snapshot.data["data"].length) {
+            return GestureDetector(
+              child: Image.network(
+                snapshot.data["data"][index]["images"]["fixed_height"]["url"],
+                height: 300.0,
+                fit: BoxFit.cover,
+              ),
+            );
+          }
+          return Container(
+            child: GestureDetector(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.add, color: Colors.white, size: 70.0),
+                  Text(
+                    "Carregar mais...",
+                    style: TextStyle(color: Colors.white, fontSize: 22.0),
+                  )
+                ],
+              ),
+            ),
           );
         });
   }
