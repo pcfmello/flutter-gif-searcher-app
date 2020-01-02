@@ -2,6 +2,13 @@
 
 The gif searcher that can be used to search and share gifs.
 
+## Features
+
+* Search gifs;
+* View gifs;
+* Loading more gifs;
+* Share gifs;
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
