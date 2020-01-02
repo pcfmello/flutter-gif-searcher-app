@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   int _offset = 0;
 
   Future<Map> _getGifs() async {
-    http.Response response = await http.get(_search == null
+    http.Response response = await http.get(_search == null || _search.isEmpty
         ? "https://api.giphy.com/v1/gifs/trending?api_key=TBBxN2L0xO3LUlDJ2jvz5ACOnyZVGcgL&limit=20&rating=G"
         : "https://api.giphy.com/v1/gifs/search?api_key=TBBxN2L0xO3LUlDJ2jvz5ACOnyZVGcgL&q=$_search&limit=19&offset=$_offset&rating=G&lang=en");
 
