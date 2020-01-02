@@ -1,6 +1,6 @@
-# giphy_clone_app
+# GIF SEARCHER APP
 
-A clone Giphy app.
+The gif searcher that can be used to search and share gifs.
 
 ## Getting Started
 
